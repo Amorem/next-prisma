@@ -3,9 +3,19 @@ import Head from 'next/head';
 import AddContactForm from './../components/AddContactForm';
 import ContactCard from './../components/ContactCard';
 
+export async function getServerSideProps() {
+  return {
+    props: {
+    initialContacts: [
+        { id: "1", firstName: 'Ryan', lastName: 'Chenkie', email: 'chenkie@prisma.io', avatar: 'https://github.com/chenkie.png'}
+    ]
+    }
+  }
+}
+
 
 export default function Index({ initialContacts }) {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(initialContacts);
   return (
     <>
       <Head>
