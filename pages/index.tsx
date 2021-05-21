@@ -3,16 +3,30 @@ import Head from 'next/head';
 import AddContactForm from './../components/AddContactForm';
 import ContactCard from './../components/ContactCard';
 
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+
 export async function getServerSideProps() {
+  const contacts = await prisma.contact.findMany()
   return {
     props: {
-    initialContacts: [
-        { id: "1", firstName: 'Ryan', lastName: 'Chenkie', email: 'chenkie@prisma.io', avatar: 'https://github.com/chenkie.png'}
-    ]
+    initialContacts: contacts
     }
   }
 }
 
+
+async function saveContact(contact) {
+  const response = await fetch('/api/contacts', {
+    method: 'POST',
+    body: JSON.stringify(contact)
+  })
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+  return await response.json();
+}
 
 export default function Index({ initialContacts }) {
   const [contacts, setContacts] = useState(initialContacts);
@@ -34,7 +48,7 @@ export default function Index({ initialContacts }) {
           <AddContactForm
             onSubmit={async (data, e) => {
               try {
-                
+                await saveContact(data)
                 setContacts([...contacts, data]);
                 e.target.reset();
               } catch (err) {

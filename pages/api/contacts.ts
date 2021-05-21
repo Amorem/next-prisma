@@ -9,11 +9,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  try {
-    const contact: Prisma.ContactCreateInput = JSON.parse(req.body);
-    const savedContact = await prisma.contact.create({ data: contact });
-    res.status(200).json(savedContact);
-  } catch (err) {
-    res.status(400).json({ message: 'Something went wrong' });
-  }
+  const contactData = JSON.parse(req.body)
+  const savedContact = await prisma.contact.create({
+    data: contactData
+  })
+  res.json(savedContact)
 };
